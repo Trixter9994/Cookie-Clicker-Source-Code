@@ -1,4 +1,4 @@
-﻿/* reset CSS */
+/* reset CSS */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -62,6 +62,7 @@ body
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	touch-action: manipulation;
 	
 	color:#fff;
 	background:#000 url(img/darkNoise.jpg);
@@ -2866,9 +2867,10 @@ SUPPORT
 }
 .supportComment
 {
+	font-size:10px;
 	opacity:0.75;
 	text-shadow:0px 0px 2px #000,0px 1px 0px #000;
-	margin:8px;
+	padding:8px 0px;
 	text-align:center;
 }
 .supportPlaceholder {width:300px;height:250px;position:absolute;left:0px;top:0px;z-index:10;opacity:0.6;}
@@ -2937,6 +2939,13 @@ SUPPORT
 	background:rgba(128,128,255,0.2);
 	box-shadow:0px 0px 4px 4px rgba(128,128,255,0.2);
 }
+
+.ifNoAds
+{
+	display:none;
+}
+.noAds .ifNoAds{display:block;}
+.noAds #support,.noAds #smallSupport,.noAds .supportComment{display:none;}
 
 /*=====================================================================================
 NEW AD DISPLAY
