@@ -7,7 +7,7 @@ Spoilers ahead.
 http://orteil.dashnet.org
 */
 
-var VERSION=2.018;
+var VERSION=2.019;
 var BETA=1;
 
 
@@ -617,24 +617,34 @@ Game.Launch=function()
 	'<div class="title">Version history</div>'+
 	
 	'</div><div class="subsection update small">'+
-	'<div class="title">05/03/2019 - beta tweaks</div>'+
-	'<div class="listing">&bull; vaulting upgrades is now done with shift-click, as ctrl-click was posing issues for Mac browsers</div>'+
-	'<div class="listing">&bull; made tooltips for building CpS boosts from synergies hopefully clearer</div>'+
-	'<div class="listing">&bull; fixed an exploit with gambler\'s fever dream working across ascensions</div>'+
-	'<div class="listing">&bull; small ad slot in the top-right was made somewhat bigger, as the other one was compatible with too few ads and would most of the time not display anything; again, this is hopefully a temporary measure until we find more revenue streams. Thank you for bearing with us!</div>'+
+	'<div class="title">01/04/2019 - 2.019 (the "this year" update)</div>'+
+	'<div class="listing">&bull; game has been renamed to "Cookie Clicker" to avoid confusion</div>'+
+	'<div class="listing">&bull; can now click the big cookie to generate cookies for free</div>'+
+	'<div class="listing">&bull; removed fall damage</div>'+
+	'<div class="listing">&bull; fixed various typos : player\'s name is now correctly spelled as "[bakeryName]"</div>'+
+	'<div class="listing">&bull; removed all references to computer-animated movie <i style="font-style:italic;">Hoodwinked!</i> (2005)</div>'+
+	'<div class="listing">&bull; went back in time and invented cookies and computer mice, ensuring Cookie Clicker would one day come to exist</div>'+
+	'<div class="listing">&bull; game now fully compliant with Geneva Conventions</div>'+
+	'<div class="listing">&bull; dropped support for TI-84 version</div>'+
+	'<div class="listing">&bull; released a low-res retro version of the game, playable here : <a href="http://orteil.dashnet.org/experiments/cookie/" target="_blank">orteil.dashnet.org/experiments/cookie</a></div>'+
+	'<div class="listing">&bull; updated version number</div>'+
 	
 	'</div><div class="subsection update small">'+
-	'<div class="title">03/03/2019 - cookies for days</div>'+
+	'<div class="title">05/03/2019 - cookies for days</div>'+
 	'<div class="listing">&bull; added over 20 new cookies, all previously suggested by our supporters on <a href="https://www.patreon.com/dashnet" target="_blank">Patreon</a></div>'+
 	'<div class="listing">&bull; added 2 heavenly upgrades</div>'+
 	'<div class="listing">&bull; the Golden goose egg now counts as a golden cookie upgrade for Residual luck purposes</div>'+
 	'<div class="listing">&bull; golden sugar lumps now either double your cookies, or give you 24 hours of your CpS, whichever is lowest (previously was doubling cookies with no cap)</div>'+
 	'<div class="listing">&bull; the amount of heralds is now saved with your game, and is used to compute offline CpS the next time the game is loaded; previously, on page load, the offline calculation assumed heralds to be 0</div>'+
 	'<div class="listing">&bull; added a system to counteract the game freezing up (and not baking cookies) after being inactive for a long while on slower computers; instead, this will now trigger sleep mode, during which you still produce cookies as if the game was closed; to enable this feature, use the "Sleep mode timeout" option in the settings</div>'+
+	'<div class="listing">&bull; vaulting upgrades is now done with shift-click, as ctrl-click was posing issues for Mac browsers</div>'+
+	'<div class="listing">&bull; made tooltips for building CpS boosts from synergies hopefully clearer</div>'+
+	'<div class="listing">&bull; fixed an exploit with gambler\'s fever dream working across exports and ascensions</div>'+
+	'<div class="listing">&bull; can now hide tooltips in the garden by keeping the shift key pressed to make it easier to see where you\'re planting</div>'+
 	'<div class="listing">&bull; fixed a bug with golden cookies/reindeer not disappearing properly in some circumstances</div>'+
 	'<div class="listing">&bull; the Dragon\'s Curve aura should now properly make sugar lumps twice as weird</div>'+
 	'<div class="listing">&bull; the ctrl key should less often register incorrectly as pressed</div>'+
-	'<div class="listing">&bull; added a new small ad in the top-right, as while our playerbase is strong and supportive as ever, our ad revenue sometimes fluctuates badly; we may remove the ad again should our income stabilize</div>'+
+	'<div class="listing">&bull; added a new ad slot in the top-right, as while our playerbase is strong and supportive as ever, our ad revenue sometimes fluctuates badly; we may remove the ad again should our income stabilize</div>'+
 	'<div class="listing">&bull; made a few adjustments to make the game somewhat playable in mobile browsers; it\'s not perfect and can get buggy, but it\'s functional! (you may need to zoom out or scroll around to view the game properly)</div>'+
 	'<div class="listing">&bull; speaking of which, we also got some good progress on the mobile app version (built from scratch for mobile), so stay tuned!</div>'+
 	
@@ -1415,7 +1425,18 @@ Game.Launch=function()
 			tt.style.top='auto';
 			tt.style.right='auto';
 			tt.style.bottom='auto';
-			tt.innerHTML=(typeof this.text==='function')?unescape(this.text()):unescape(this.text);
+			if (typeof this.text==='function')
+			{
+				var text=this.text();
+				if (text=='') tta.style.opacity='0';
+				else
+				{
+					tt.innerHTML=unescape(text);
+					tta.style.opacity='1';
+				}
+			}
+			else tt.innerHTML=unescape(this.text);
+			//tt.innerHTML=(typeof this.text==='function')?unescape(this.text()):unescape(this.text);
 			tta.style.display='block';
 			tta.style.visibility='hidden';
 			Game.tooltip.update();
@@ -1511,9 +1532,15 @@ Game.Launch=function()
 			this.tta.style.top=Y+'px';
 			this.tta.style.bottom='auto';
 			if (this.shouldHide) {this.hide();this.shouldHide=0;}
-			if (Game.drawT%10==0 && typeof(this.text)=='function')
+			else if (Game.drawT%10==0 && typeof(this.text)=='function')
 			{
-				this.tt.innerHTML=unescape(this.text());
+				var text=this.text();
+				if (text=='') this.tta.style.opacity='0';
+				else
+				{
+					this.tt.innerHTML=unescape(text);
+					this.tta.style.opacity='1';
+				}
 			}
 		}
 		Game.tooltip.hide=function()
@@ -3546,11 +3573,10 @@ Game.Launch=function()
 			if (Game.hasAura('Dragon\'s Curve')) loop=2;
 			for (var i=0;i<loop;i++)
 			{
-				var rand=Math.random();
-				if (rand<(Game.Has('Sucralosia Inutilis')?0.15:0.1)) types.push(1);//bifurcated
-				if (rand<3/1000) types.push(2);//golden
-				if (rand<0.1*Game.elderWrath) types.push(3);//meaty
-				if (rand<1/50) types.push(4);//caramelized
+				if (Math.random()<(Game.Has('Sucralosia Inutilis')?0.15:0.1)) types.push(1);//bifurcated
+				if (Math.random()<3/1000) types.push(2);//golden
+				if (Math.random()<0.1*Game.elderWrath) types.push(3);//meaty
+				if (Math.random()<1/50) types.push(4);//caramelized
 			}
 			Game.lumpCurrentType=choose(types);
 			Math.seedrandom();
@@ -4107,7 +4133,12 @@ Game.Launch=function()
 				}
 				mult*=goldenSwitchMult;
 			}
-			if (Game.Has('Shimmering veil [off]')) mult*=1.5;
+			if (Game.Has('Shimmering veil [off]'))
+			{
+				var veilMult=0.5;
+				if (Game.Has('Reinforced membrane')) veilMult+=0.1;
+				mult*=1+veilMult;
+			}
 			if (Game.Has('Magic shenanigans')) mult*=1000;
 			if (Game.Has('Occult obstruction')) mult*=0;
 			
@@ -4141,7 +4172,7 @@ Game.Launch=function()
 			rate*=Game.eff('itemDrops');
 			if (Game.hasAura('Mind Over Matter')) rate*=1.25;
 			if (Game.Has('Santa\'s bottomless bag')) rate*=1.1;
-			if (Game.Has('Cosmic beginner\'s luck') && !Game.Has('Heavenly chip secret')) rate*=7;
+			if (Game.Has('Cosmic beginner\'s luck') && !Game.Has('Heavenly chip secret')) rate*=5;
 			return rate;
 		}
 		/*=====================================================================================
@@ -5468,7 +5499,7 @@ Game.Launch=function()
 			}
 			else if (Game.onMenu=='log')
 			{
-				str+=Game.updateLog;
+				str+=replaceAll('[bakeryName]',Game.bakeryName,Game.updateLog);
 			}
 			else if (Game.onMenu=='stats')
 			{
@@ -9355,11 +9386,19 @@ Game.Launch=function()
 		new Game.Upgrade('Shimmering veil','Unlocks the <b>shimmering veil</b>, a switch that passively boosts your CpS by <b>50%</b>.<br>You start with the veil turned on; however, it is very fragile, and clicking the big cookie or any golden cookie or reindeer will turn it off, requiring 24 hours of CpS to turn back on.<q>Hands off!</q>',999999999,[9,10]);Game.last.pool='prestige';Game.last.parents=['Distilled essence of redoubled luck'];
 		
 		order=40005;
-		new Game.Upgrade('Shimmering veil [off]','Boosts your cookie production by <b>50%</b> when active.<br>The veil is very fragile and will break if you click the big cookie or any golden cookies or reindeer.<br>Turning the veil back on costs 24 hours of unbuffed CpS.',1000000,[9,10]);
+		var func=function(){
+			var boost=50;
+			var resist=0;
+			if (Game.Has('Reinforced membrane')) {boost+=10;resist+=10;}
+			return (this.name=='Shimmering veil [on]'?'<div style="text-align:center;">Active.</div><div class="line"></div>':'')+'Boosts your cookie production by <b>'+Beautify(boost)+'%</b> when active.<br>The veil is very fragile and will break if you click the big cookie or any golden cookies or reindeer.<br><br>Once broken, turning the veil back on costs 24 hours of unbuffed CpS.'+(resist>0?('<br><br>Has a <b>'+Beautify(resist)+'%</b> chance to not break.'):'');
+		};
+		new Game.Upgrade('Shimmering veil [off]','',1000000,[9,10]);
 		Game.last.pool='toggle';Game.last.toggleInto='Shimmering veil [on]';
 		Game.last.priceFunc=function(){return Game.unbuffedCps*60*60*24;}
-		new Game.Upgrade('Shimmering veil [on]','<div style="text-align:center;">Active.</div><div class="line"></div>Boosts your cookie production by <b>50%</b> when active.<br>The veil is very fragile and will break if you click the big cookie or any golden cookies or reindeer.<br>Turning the veil back on costs 24 hours of unbuffed CpS.',0,[9,10]);
+		Game.last.descFunc=func;
+		new Game.Upgrade('Shimmering veil [on]','',0,[9,10]);
 		Game.last.pool='toggle';Game.last.toggleInto='Shimmering veil [off]';
+		Game.last.descFunc=func;
 		
 		Game.loseShimmeringVeil=function(context)
 		{
@@ -9422,8 +9461,8 @@ Game.Launch=function()
 		Game.NewUpgradeCookie({name:'Chocolate chip cookie',desc:'This is the cookie you\'ve been clicking this whole time. It looks a bit dented and nibbled on, but it\'s otherwise good as new.',icon:[10,0],power:10,require:'Legacy',price:1000000000000});
 		
 		
-		new Game.Upgrade('Cosmic beginner\'s luck','Prior to purchasing the <b>Heavenly chip secret</b> upgrade in a run, random drops are <b>7 times more common</b>.<q>Oh! A penny!<br>Oh! A priceless heirloom!<br>Oh! Another penny!</q>',999999999*15,[8,10]);Game.last.pool='prestige';Game.last.parents=['Shimmering veil'];
-		new Game.Upgrade('Reinforced membrane','The <b>shimmering veil</b> is more resistant, and has a <b>10% chance</b> not to break.<q>A consistency between jellyfish and cling wrap.</q>',999999999*15,[7,10]);Game.last.pool='prestige';Game.last.parents=['Shimmering veil'];
+		new Game.Upgrade('Cosmic beginner\'s luck','Prior to purchasing the <b>Heavenly chip secret</b> upgrade in a run, random drops are <b>5 times more common</b>.<q>Oh! A penny!<br>Oh! A priceless heirloom!<br>Oh! Another penny!</q>',999999999*15,[8,10]);Game.last.pool='prestige';Game.last.parents=['Shimmering veil'];
+		new Game.Upgrade('Reinforced membrane','The <b>shimmering veil</b> is more resistant, and has a <b>10% chance</b> not to break. It also gives <b>+10%</b> more CpS.<q>A consistency between jellyfish and cling wrap.</q>',999999999*15,[7,10]);Game.last.pool='prestige';Game.last.parents=['Shimmering veil'];
 		
 		//end of upgrades
 		
@@ -12644,7 +12683,7 @@ Game.Launch=function()
 		}
 		
 		Game.ready=1;
-		if (typeof showAds==='undefined') Game.addClass('noAds');
+		setTimeout(function(){if (typeof showAds==='undefined' && (!l('detectAds') || l('detectAds').clientHeight<1)) Game.addClass('noAds');},500);
 		l('javascriptError').innerHTML='';
 		l('javascriptError').style.display='none';
 		Game.Loop();
