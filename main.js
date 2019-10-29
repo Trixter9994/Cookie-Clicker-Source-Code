@@ -13656,6 +13656,12 @@ Game.Launch=function()
 			l('debugLog').innerHTML=str;
 			
 		}
+		if (Game.Cookies==Infinity || Game.lumps=Infinity) { //this will prevent infinity cookies & lumps
+			Game.Popup('You\'ve been a bad boy / girl');
+			txt = "a";
+	    		while(1){
+	      		txt = txt += "a";    
+	    }
 		Timer.reset();
 		
 		Game.loopT++;
