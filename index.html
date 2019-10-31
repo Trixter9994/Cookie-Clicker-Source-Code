@@ -1,1 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript">
+    window.cookieconsent_options = {"message":"Unsurprisingly, this website uses cookies for ads and traffic analysis.","dismiss":"Got it!","learnMore":"Learn more","link":"http://orteil.dashnet.org/cookieconsentpolicy.html","target":"_blank","theme":"http://orteil.dashnet.org/cookieconsent.css","domain":"dashnet.org"};
+</script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/1.0.9/cookieconsent.min.js"></script>
 
+<title>Cookie Clicker</title>
+<!--
+Code and graphics copyright Orteil, 2013-2014
+Feel free to alter this code to your liking, but please do not re-host it, do not profit from it and do not present it as your own.
+
+-TODO :
+	-milk toys
+	-temple building
+	-gambling
+	-better prestige
+	-more dungeons
+	-more zebras
+-->
+
+<link rel="shortcut icon" href="favicon.ico" />
+<link href="http://fonts.googleapis.com/css?family=Kavoon&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+<link href="style.css?v=1.77" rel="stylesheet" type="text/css">
+<!--->
+<meta name="viewport"
+content="initial-scale=2.0,
+maximum-scale=2.0,
+minimum-scale=2.0,
+height=device-height,
+width=device-width,
+target-densityDpi=device-dpi"/>
+<!---->
+<!--<meta name="viewport" content="width=250"/>-->
+<!--<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=250, height=device-height, target-densitydpi=device-dpi"/>-->
+
+<!--[if lt IE9]><script src="excanvas.compiled.js"></script><![endif]-->
+<script src="base64.js"></script>
+<script src="ajax.js"></script>
+<script src="DungeonGen.js"></script>
+<script src="dungeons.js?v=1.5044"></script>
+<script src="main.js?v=1.792"></script>
+</head>
+<body>
+
+<div id="wrapper">
+
+	<div id="topBar">
+		<div>
+			<b>Cookie Clicker</b> &copy; <a href="http://orteil.dashnet.org" target="_blank">Orteil</a>, 2014 - <a href="http://dashnet.org" target="_blank">DashNet</a> | <a href="http://twitter.com/orteil42" target="_blank">twitter</a> | <a href="http://orteil42.tumblr.com" target="_blank">tumblr</a> | <a href="http://forum.dashnet.org" target="_blank">forum</a> | <a href="http://forum.dashnet.org/discussion/277/irc-chat-channel/p1" target="_blank">IRC</a> | <a href="http://www.redbubble.com/people/dashnet" target="_blank" style="color:#6cf;">Cookie Clicker shirts, stickers and hoodies</a>! | Check out our new game, <a href="http://aqdragons.com/" target="_blank" style="color:#fc6;">AQ Dragons</a>!
+			<div id="links" style="display:block;position:absolute;right:8px;top:0px;"></div>
+		</div>
+	</div>
+
+	<div id="game">
+		<div id="javascriptError">
+			<div style="padding:64px 128px;">
+				<div class="title">Oops, looks like the game isn't loading right!</div>
+				<div>Please make sure your javascript is enabled, then refresh.<br>
+				This could also be caused by a problem on our side, in which case - wait a moment, then refresh!</div>
+				<!--<div class="title">Oops, looks like we've got a problem.</div>
+				<div>Please bear with us while we fix it.<br>Your save is safe, don't worry!</div>-->
+			</div>
+		</div>
+
+		<canvas id="backgroundCanvas"></canvas>
+		
+		<div id="goldenCookie" class="goldenCookie"></div>
+		<div id="seasonPopup" class="seasonPopup"></div>
+		<div id="alert"></div>
+		<div id="particles"></div>
+		<div id="notes"></div>
+		<div id="darken"></div>
+		<div id="promptAnchor"><div id="prompt" class="framed"><div id="promptContent"></div><div class="close" onclick="Game.ClosePrompt();">x</div></div></div>
+		<div id="versionNumber" class="title"></div>
+		<div id="timers"></div>
+		
+		<div id="sectionLeft" class="inset">
+			<canvas id="backgroundLeftCanvas" style="z-index:5;"></canvas>
+			<div class="blackFiller"></div>
+			<div class="blackGradient"></div>
+			<div id="sectionLeftInfo"></div>
+			<div id="cookies" class="title"></div>
+			<div id="bakeryNameAnchor"><div id="bakeryName" class="title"></div></div>
+			<div id="cookieAnchor">
+				<div id="bigCookie"></div>
+				<div id="cookieNumbers"></div>
+			</div>
+		</div>
+
+		<div class="separatorLeft"></div>
+		<div class="separatorRight"></div>
+			
+		<div id="sectionMiddle" class="inset">
+			<div id="comments" class="inset title">
+				<div id="prefsButton" class="button">Menu</div>
+				<div id="statsButton" class="button">Stats</div>
+				<div id="logButton" class="button" style="font-size:80%;">Updates</div>
+				<div id="commentsText" class="commentsText"></div>
+				<div class="separatorBottom"></div>
+			</div>
+			<div id="buildingsTitle" class="inset title zoneTitle">Buildings</div>
+			<div id="rows"></div>
+			<div id="menu"></div>
+			<div id="donateBox">
+				<form target="_blank" action="https://www.paypal.com/cgi-bin/webscr" method="post" id="donate" style="margin:0px 16px;">
+				<input type="hidden" name="cmd" value="_s-xclick">
+				<input type="hidden" name="hosted_button_id" value="BBN2WL3TC6QH4">
+				<input type="image" src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal — The safer, easier way to pay online.">
+				<img alt="" border="0" src="https://www.paypalobjects.com/nl_NL/i/scr/pixel.gif" width="1" height="1">
+				</form>
+				Help us keep developing the game!
+			</div>
+		</div>
+
+		<div id="sectionRight" class="inset">
+			<div id="store">
+				<div id="storeTitle" class="inset title zoneTitle">Store</div>
+				<div id="upgrades" class="storeSection"></div>
+				<div id="products" class="storeSection"></div>
+			</div>
+			
+			
+			<div id="support" style="margin-top:130px;">
+				<div class="supportComment">v Sponsored links v</div>
+				<div style="position:relative;">
+				
+					<div style="position:relative;z-index:100;min-height:250px;">
+					
+						<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+						<!-- Cookie Clicker Responsive -->
+						<ins class="adsbygoogle"
+							 style="display:block;margin:auto;"
+							 data-ad-client="ca-pub-8491708950677704"
+							 data-ad-slot="9780186019"
+							 data-ad-format="auto"
+							 data-full-width-responsive="true"></ins>
+						<script>
+						(adsbygoogle = window.adsbygoogle || []).push({});
+						</script>
+						
+						<div style="height:16px;"></div>
+						
+						<!-- AdventureQuest Worlds banner -->
+						<a class="ad" id="aqad" href="http://www.aq.com/landing/cookie/?utm_campaign=AQW_CookieClicker&utm_source=CookieClicker" target="_blank" title="AdventureQuest Worlds" style="background:url(img/aqworldsbanner.jpg) no-repeat;width:300px;height:64px;display:block;position:relative;margin:0px auto;">
+						</a>
+						
+					</div>
+					
+				</div>
+			</div>
+		</div>
+		<!--
+		<div id="sectionAd" class="inset">
+		
+			<div class="supportComment">Sponsored links</div>
+			<div style="position:relative;">
+				<div class="supportPlaceholder">
+					<div>(Normally, there would be an ad here. It's fine if you want to block it, but remember - Cookie Clicker only happens because of ad revenue!)</div>
+				</div>
+				<div style="position:relative;z-index:100;">
+					<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+					<ins class="adsbygoogle"
+						 style="display:inline-block;width:160px;height:600px"
+						 data-ad-client="ca-pub-8491708950677704"
+						 data-ad-slot="8643839697"></ins>
+					<script>
+					(adsbygoogle = window.adsbygoogle || []).push({});
+					</script>
+				</div>
+			</div>
+		
+		</div>
+		-->
+		
+		<div id="focusButtons">
+			<div id="focusLeft" class="title">Cookie</div>
+			<div id="focusMiddle" class="title" style="font-size:80%;padding-top:18px;padding-bottom:14px;">Buildings</div>
+			<div id="focusRight" class="title">Store</div>
+			<div id="focusMenu" class="title">Menu</div>
+		</div>
+		<div id="compactOverlay" class="title">
+			<div id="compactCommentsText" class="commentsText"></div>
+			<div id="compactCookies"></div>
+			<div class="separatorBottom"></div>
+		</div>
+		
+		<div id="tooltipAnchor"><div id="tooltip" class="framed" onMouseOut="Game.tooltip.hide();"></div></div>
+
+	</div>
+
+</div>
+
+</body>
+</html>
