@@ -7,8 +7,8 @@ Spoilers ahead.
 http://orteil.dashnet.org
 */
 
-var VERSION=2.021;
-var BETA=1;
+var VERSION=2.022;
+var BETA=0;
 
 
 /*=====================================================================================
@@ -618,11 +618,12 @@ Game.Launch=function()
 	'<div class="title">Version history</div>'+
 	
 	'</div><div class="subsection update">'+
-	'<div class="title">16/09/2019 - going off-script</div>'+
+	'<div class="title">28/09/2019 - going off-script</div>'+
 	'<div class="listing">&bull; added a new building</div>'+
 	'<div class="listing">&bull; added fortune cookies (a new heavenly upgrade)</div>'+
 	'<div class="listing">&bull; more upgrades, achievements etc</div>'+
 	'<div class="listing">&bull; updated the Russian bread cookies icon to better reflect their cyrillic origins</div>'+
+	'<div class="listing">&bull; <i style="font-style:italic;">stealth update :</i> the sugar lump refill timeout (not sugar lump growth) now no longer ticks down while the game is closed (this fixes an exploit)</div>'+
 	'<div class="listing">&bull; also released the official Android version of Cookie Clicker, playable <a href="https://play.google.com/store/apps/details?id=org.dashnet.cookieclicker" target="_blank">here</a> (iOS version will come later)</div>'+
 	
 	'</div><div class="subsection update small">'+
@@ -1220,7 +1221,7 @@ Game.Launch=function()
 		Game.lumps=-1;//sugar lumps
 		Game.lumpsTotal=-1;//sugar lumps earned across all playthroughs (-1 means they haven't even started yet)
 		Game.lumpT=Date.now();//time when the current lump started forming
-		Game.lumpRefill=0;//time when we last used a sugar lump (on minigame refills etc)
+		Game.lumpRefill=0;//time left before a sugar lump can be used again (on minigame refills etc) in logic frames
 		
 		Game.makeSeed=function()
 		{
@@ -2141,6 +2142,7 @@ Game.Launch=function()
 						Game.lumpsTotal=spl[43]?parseFloat(spl[43]):-1;
 						Game.lumpT=spl[44]?parseInt(spl[44]):Date.now();
 						Game.lumpRefill=spl[45]?parseInt(spl[45]):0;
+						if (version<2.022) Game.lumpRefill=Game.fps*60;
 						Game.lumpCurrentType=spl[46]?parseInt(spl[46]):0;
 						Game.vault=spl[47]?spl[47].split(','):[];
 							for (var i in Game.vault){Game.vault[i]=parseInt(Game.vault[i]);}
@@ -2585,6 +2587,8 @@ Game.Launch=function()
 			Game.fortuneGC=0;
 			Game.fortuneCPS=0;
 			
+			Game.TickerClicks=0;
+			
 			if (Game.gainedPrestige>0) Game.resets++;
 			if (!hard && Game.canLumps() && Game.ascensionMode!=1) Game.addClass('lumpsOn');
 			else Game.removeClass('lumpsOn');
@@ -2607,6 +2611,7 @@ Game.Launch=function()
 				if (me.pool!='prestige' && !me.lasting)
 				{
 					if (Game.Has('Keepsakes') && Game.seasonDrops.indexOf(me.name)!=-1 && Math.random()<1/5){}
+					else if (Game.ascensionMode==1 && Game.HasAchiev('O Fortuna') && me.tier=='fortune'){}
 					else if (Game.HasAchiev('O Fortuna') && me.tier=='fortune' && Math.random()<0.4){}
 					else me.unlocked=0;
 				}
@@ -3582,7 +3587,7 @@ Game.Launch=function()
 			else if (Game.lumpCurrentType==4)
 			{
 				total*=choose([1,2,3]);
-				Game.lumpRefill=Date.now()-Game.getLumpRefillMax();
+				Game.lumpRefill=0;//Date.now()-Game.getLumpRefillMax();
 				if (Game.prefs.popups) Game.Popup('Sugar lump cooldowns cleared!');
 				else Game.Notify('Sugar lump cooldowns cleared!','',[29,27]);
 			}
@@ -3629,15 +3634,15 @@ Game.Launch=function()
 		
 		Game.getLumpRefillMax=function()
 		{
-			return 1000*60*15;//15 minutes
+			return Game.fps*60*15;//1000*60*15;//15 minutes
 		}
 		Game.getLumpRefillRemaining=function()
 		{
-			return Game.getLumpRefillMax()-(Date.now()-Game.lumpRefill);
+			return Game.lumpRefill;//Game.getLumpRefillMax()-(Date.now()-Game.lumpRefill);
 		}
 		Game.canRefillLump=function()
 		{
-			return ((Date.now()-Game.lumpRefill)>=Game.getLumpRefillMax());
+			return Game.lumpRefill<=0;//((Date.now()-Game.lumpRefill)>=Game.getLumpRefillMax());
 		}
 		Game.refillLump=function(n,func)
 		{
@@ -3645,7 +3650,7 @@ Game.Launch=function()
 			{
 				Game.spendLump(n,'refill',function()
 				{
-					if (!Game.sesame) Game.lumpRefill=Date.now();
+					if (!Game.sesame) Game.lumpRefill=Game.getLumpRefillMax();//Date.now();
 					func();
 				})();
 			}
@@ -3674,6 +3679,8 @@ Game.Launch=function()
 		
 		Game.doLumps=function()
 		{
+			if (Game.lumpRefill>0) Game.lumpRefill--;
+			
 			if (!Game.canLumps()) {Game.removeClass('lumpsOn');return;}
 			if (Game.lumpsTotal==-1)
 			{
@@ -6447,7 +6454,7 @@ Game.Launch=function()
 				{
 					Game.Notify('Fortune!','You gain <b>one hour</b> of your CpS (capped at double your bank).',[10,32]);
 					Game.fortuneCPS=1;
-					Game.Earn((Game.cookiesPs*60*60,Game.cookies));
+					Game.Earn(Math.min(Game.cookiesPs*60*60,Game.cookies));
 				}
 				else
 				{
@@ -8009,8 +8016,9 @@ Game.Launch=function()
 		
 		Game.Has=function(what)
 		{
-			if (Game.ascensionMode==1 && Game.Upgrades[what].pool=='prestige') return 0;
-			return (Game.Upgrades[what]?Game.Upgrades[what].bought:0);
+			var it=Game.Upgrades[what];
+			if (Game.ascensionMode==1 && (it.pool=='prestige' || it.tier=='fortune')) return 0;
+			return (it?it.bought:0);
 		}
 		Game.HasUnlocked=function(what)
 		{
@@ -8025,7 +8033,7 @@ Game.Launch=function()
 			for (var i in Game.Upgrades)
 			{
 				var me=Game.Upgrades[i];
-				if (!me.bought && me.pool!='debug' && me.pool!='prestige' && me.pool!='prestigeDecor' && (!me.lasting || Game.ascensionMode!=1))
+				if (!me.bought && me.pool!='debug' && me.pool!='prestige' && me.pool!='prestigeDecor' && (Game.ascensionMode!=1 || (!me.lasting && me.tier!='fortune')))
 				{
 					if (me.unlocked) list.push(me);
 				}
@@ -8429,8 +8437,9 @@ Game.Launch=function()
 		new Game.Upgrade('Neuromancy','Can toggle upgrades on and off at will in the stats menu.<q>Can also come in handy to unsee things that can\'t be unseen.</q>',7,[4,9]);//debug purposes only
 		Game.last.pool='debug';
 		
-		order=10031;
+		order=10020;
 		Game.NewUpgradeCookie({name:'Empire biscuits',desc:'For your growing cookie empire, of course!',icon:[5,4],power:											2,	price:	99999999999999});
+		order=10031;
 		Game.NewUpgradeCookie({name:'British tea biscuits',desc:'Quite.',icon:[6,4],require:'Tin of british tea biscuits',power:									2,	price:	99999999999999});
 		Game.NewUpgradeCookie({name:'Chocolate british tea biscuits',desc:'Yes, quite.',icon:[7,4],require:Game.last.name,power:									2,	price:	99999999999999});
 		Game.NewUpgradeCookie({name:'Round british tea biscuits',desc:'Yes, quite riveting.',icon:[8,4],require:Game.last.name,power:								2,	price:	99999999999999});
@@ -9731,7 +9740,7 @@ Game.Launch=function()
 		Game.last.priceFunc=function(me){return Math.min(me.basePrice,Game.unbuffedCps*60*60*24);}
 		new Game.Upgrade('Fortune #102','You gain <b>+1%</b> of your regular CpS while the game is closed <small>(provided you have the Twin Gates of Transcendence heavenly upgrade)</small>.<q>Help, I\'m trapped in a browser game!</q>',Game.Tiers['fortune'].price*100000000000,[0,0]);Game.MakeTiered(Game.last,'fortune',10);
 		Game.last.priceFunc=function(me){return Math.min(me.basePrice,Game.unbuffedCps*60*60*24);}
-		new Game.Upgrade('Fortune #103','You gain <b>more CpS</b> the more milk you have.<q>Don\'t believe the superstitions; all cats are good luck.</q>',Game.Tiers['fortune'].price*100000000000000,[0,0]);Game.MakeTiered(Game.last,'fortune',18);
+		new Game.Upgrade('Fortune #103','You gain <b>more CpS</b> the more milk you have.<q>Don\'t believe the superstitions; all cats are good luck.</q>',Game.Tiers['fortune'].price*100000000000000,[0,0]);Game.MakeTiered(Game.last,'fortune',18);Game.last.kitten=1;
 		Game.last.priceFunc=function(me){return Math.min(me.basePrice,Game.unbuffedCps*60*60*24);}
 		new Game.Upgrade('Fortune #104','Clicking gains <b>+1% of your CpS</b>.<q>Remember to stay in touch.</q>',Game.Tiers['fortune'].price*100000000000,[0,0]);Game.MakeTiered(Game.last,'fortune',11);
 		Game.last.priceFunc=function(me){return Math.min(me.basePrice,Game.unbuffedCps*60*60*24);}
@@ -10815,7 +10824,7 @@ Game.Launch=function()
 		new Game.Achievement('If at first you don\'t succeed','Ascend with <b>1 septendecillion</b> cookies baked.<q>If at first you don\'t succeed, try, try, try again.<br>But isn\'t that the definition of insanity?</q>',[21,32]);
 		
 		order=33000;
-		new Game.Achievement('O Fortuna','Own every <b>fortune upgrade</b>.<div class="line"></div>Owning this achievement makes fortunes appear <b>twice as often</b>; fortune upgrades also have a <b>40% chance</b> to carry over after ascending.',[29,8]);
+		new Game.Achievement('O Fortuna','Own every <b>fortune upgrade</b>.<div class="line"></div>Owning this achievement makes fortunes appear <b>twice as often</b>; unlocked fortune upgrades also have a <b>40% chance</b> to carry over after ascending.',[29,8]);
 		
 		//end of achievements
 		
@@ -12909,7 +12918,7 @@ Game.Launch=function()
 			str+='<a class="option neato" '+Game.clickStr+'="Game.SetAllAchievs(1);">All achievs</a><br>';
 			str+='<a class="option neato" '+Game.clickStr+'="Game.santaLevel=0;Game.dragonLevel=0;">Reset specials</a>';
 			str+='<a class="option neato" '+Game.clickStr+'="Game.MaxSpecials();">Max specials</a><br>';
-			str+='<a class="option neato" '+Game.clickStr+'="Game.lumpRefill=Date.now()-Game.getLumpRefillMax();">Reset refills</a>';
+			str+='<a class="option neato" '+Game.clickStr+'="Game.lumpRefill=0;/*Date.now()-Game.getLumpRefillMax();*/">Reset refills</a>';
 			str+='<a class="option neato" '+Game.clickStr+'="Game.EditAscend();">'+(Game.DebuggingPrestige?'Exit Ascend Edit':'Ascend Edit')+'</a>';
 			str+='<a class="option neato" '+Game.clickStr+'="Game.DebugUpgradeCpS();">Debug upgrades CpS</a>';
 			str+='<a class="option neato" '+Game.clickStr+'="Game.seed=Game.makeSeed();">Re-seed</a>';
