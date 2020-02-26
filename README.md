@@ -1,4 +1,4 @@
-# Cookie-Clicker-Source-Code-Beta
+# Cookie-Clicker-Source-Code
 2.021 source code for... educational purposes... <br>
 Download and Extract to delete free time. Or just use the website. <br> <br>
 Do not worry, I will be updating this to be up to date with the current Cookie Clicker beta version. <br>
