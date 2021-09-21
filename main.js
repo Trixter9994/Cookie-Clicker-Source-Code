@@ -55,21 +55,21 @@ function shuffle(array)
 	return array;
 }
 
-var sinArray=[];
-for (var i=0;i<360;i++)
-{
-	//let's make a lookup table
-	sinArray[i]=Math.sin(i/360*Math.PI*2);
-}
-function quickSin(x)
-{
-	//oh man this isn't all that fast actually
-	//why do I do this. why
-	var sign=x<0?-1:1;
-	return sinArray[Math.round(
-		(Math.abs(x)*360/Math.PI/2)%360
-	)]*sign;
-}
+// var sinArray=[];
+// for (var i=0;i<360;i++)
+// {
+// 	//let's make a lookup table
+// 	sinArray[i]=Math.sin(i/360*Math.PI*2);
+// }
+// function quickSin(x)
+// {
+// 	//oh man this isn't all that fast actually
+// 	//why do I do this. why
+// 	var sign=x<0?-1:1;
+// 	return sinArray[Math.round(
+// 		(Math.abs(x)*360/Math.PI/2)%360
+// 	)]*sign;
+// }
 
 /*function ajax(url,callback){
 	var ajaxRequest;
