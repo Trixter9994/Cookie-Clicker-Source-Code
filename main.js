@@ -3802,7 +3802,7 @@ Game.Launch=function()
 			}
 			
 			//if (Game.hasAura('Dragon Cursor')) mult*=1.05;
-			mult*=1+Game.auraMult('Dragon Cursor')*0.05;
+			mult*=1+Game.auraMult('Dragon Cursor')*10;
 			
 			for (var i in Game.customMouseCpsMult) {mult*=Game.customMouseCpsMult[i]();}
 			
@@ -4186,7 +4186,7 @@ Game.Launch=function()
 			if (Game.Has('Shimmering veil [off]'))
 			{
 				var veilMult=0.5;
-				if (Game.Has('Reinforced membrane')) veilMult+=0.1;
+				if (Game.Has('Reinforced membrane')) veilMult+=10;
 				mult*=1+veilMult;
 			}
 			if (Game.Has('Magic shenanigans')) mult*=1000;
