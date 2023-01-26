@@ -1604,11 +1604,11 @@ Game.Launch=function()
 			var str='';
 
 
-			{
+			
 				str='<b>New version available : v. '+r[0]+'!</b>';
 				if (r[1]) str+='<br><small>Update note : "'+r[1]+'"</small>';
 				str+='<br><b>Refresh to get it!</b>';
-            }
+            
     
 		
 		/*=====================================================================================
