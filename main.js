@@ -1599,30 +1599,17 @@ Game.Launch=function()
 		/*=====================================================================================
 		UPDATE CHECKER
 		=======================================================================================*/
-		Game.CheckUpdates=function()
-		{
-			ajax('server.php?q=checkupdate',Game.CheckUpdatesResponse);
-		}
-		Game.CheckUpdatesResponse=function(response)
-		{
+
 			var r=response.split('|');
 			var str='';
-			if (r[0]=='alert')
-			{
-				if (r[1]) str=r[1];
-			}
-			else if (parseFloat(r[0])>Game.version)
+
+
 			{
 				str='<b>New version available : v. '+r[0]+'!</b>';
 				if (r[1]) str+='<br><small>Update note : "'+r[1]+'"</small>';
 				str+='<br><b>Refresh to get it!</b>';
-			}
-			if (str!='')
-			{
-				l('alert').innerHTML=str;
-				l('alert').style.display='block';
-			}
-		}
+            }
+    
 		
 		/*=====================================================================================
 		DATA GRABBER
