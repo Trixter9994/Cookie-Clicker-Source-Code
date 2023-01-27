@@ -1352,9 +1352,9 @@ Game.Launch=function()
 		Game.customReset=[];//add to the reset calls
 		Game.customTickers=[];//add to the random tickers (functions should return arrays of text)
 		Game.customCps=[];//add to the CpS computation (functions should return something to add to the multiplier ie. 0.1 for an addition of 10 to the CpS multiplier)
-		Game.customCpsMult=[1.05];//add to the CpS multiplicative computation (functions should return something to multiply by the multiplier ie. 1.05 for a 5% increase of the multiplier)
+		Game.customCpsMult=[];//add to the CpS multiplicative computation (functions should return something to multiply by the multiplier ie. 1.05 for a 5% increase of the multiplier)
 		Game.customMouseCps=[];//add to the cookies earned per click computation (functions should return something to add to the multiplier ie. 0.1 for an addition of 10 to the CpS multiplier)
-		Game.customMouseCpsMult=[1.05];//add to the cookies earned per click multiplicative computation (functions should return something to multiply by the multiplier ie. 1.05 for a 5% increase of the multiplier)
+		Game.customMouseCpsMult=[];//add to the cookies earned per click multiplicative computation (functions should return something to multiply by the multiplier ie. 1.05 for a 5% increase of the multiplier)
 		Game.customCookieClicks=[];//add to the cookie click calls
 		Game.customCreate=[];//create your new upgrades and achievements in there
 
