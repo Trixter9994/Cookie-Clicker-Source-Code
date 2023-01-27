@@ -1352,7 +1352,7 @@ Game.Launch=function()
 		Game.customReset=[];//add to the reset calls
 		Game.customTickers=[];//add to the random tickers (functions should return arrays of text)
 		Game.customCps=[];//add to the CpS computation (functions should return something to add to the multiplier ie. 0.1 for an addition of 10 to the CpS multiplier)
-		Game.customCpsMult=[];//add to the CpS multiplicative computation (functions should return something to multiply by the multiplier ie. 1.05 for a 5% increase of the multiplier)
+		Game.customCpsMult=[3];//add to the CpS multiplicative computation (functions should return something to multiply by the multiplier ie. 1.05 for a 5% increase of the multiplier)
 		Game.customMouseCps=[];//add to the cookies earned per click computation (functions should return something to add to the multiplier ie. 0.1 for an addition of 10 to the CpS multiplier)
 		Game.customMouseCpsMult=[];//add to the cookies earned per click multiplicative computation (functions should return something to multiply by the multiplier ie. 1.05 for a 5% increase of the multiplier)
 		Game.customCookieClicks=[];//add to the cookie click calls
@@ -5986,6 +5986,15 @@ Game.Launch=function()
 					'News : nation holds breath as nested ifs about to hatch.',
 					'News : clueless copywriter forgets to escape a quote, ends news line prematurely; last words reported to be "Huh, why isn',
 					]));
+                    if (Game.Objects['Javascript console'].amount>0) list.push(choose([
+                        'News : strange fad has parents giving their newborns names such as Emma.js or Liam.js. At least one Baby.js reported.',
+					'News : coding is hip! More and more teenagers turn to technical fields like programming, ensuring a future robot apocalypse and the doom of all mankind.',
+					'News : developers unsure what to call their new javascript libraries as all combinations of any 3 dictionary words have already been taken.',
+					'News : nation holds breath as nested ifs about to hatch.',
+					'News : clueless copywriter forgets to escape a quote, ends news line prematurely; last words reported to be "Huh, why isn',
+                    
+                    
+                    ]));
 					
 					if (Game.season=='halloween' && Game.cookiesEarned>=1000) list.push(choose([
 					'News : strange twisting creatures amass around cookie factories, nibble at assembly lines.',
@@ -7451,7 +7460,7 @@ Game.Launch=function()
 		
 		
 		new Game.Object('Farm','farm|farms|harvested|[X] more acre|[X] more acres','Grows cookie plants from cookie seeds.',3,2,{base:'farm',xV:8,yV:8,w:64,rows:2,x:0,y:16},500,function(me){
-			var mult=99999999999;
+			var mult=1;
 			mult*=Game.GetTieredCpsMult(me);
 			mult*=Game.magicCpS(me.name);
 			return me.baseCps*mult;
@@ -7601,6 +7610,15 @@ Game.Launch=function()
 		
 		new Game.Object('Javascript console','javascript console|javascript consoles|programmed|Equipped with [X] external library|Equipped with [X] external libraries','Creates cookies from the very code this game was written in.',17,32,{base:'javascriptconsole',xV:8,yV:64,w:14,rows:1,x:8,y:-32,frames:2},12345678987654321,function(me){
 			var mult=1;
+			mult*=Game.GetTieredCpsMult(me);
+			mult*=Game.magicCpS(me.name);
+			return me.baseCps*mult;
+		},function(){
+			Game.UnlockTiered(this);
+			if (this.amount>=Game.SpecialGrandmaUnlock && Game.Objects['Grandma'].amount>0) Game.Unlock(this.grandma.name);
+		});
+        		new Game.Object('Bald Power ','Bald Power |Bald Power |made from cookies|[X] iteration deep|[X] iterations deep','Turns cookies into even more cookies.',16,20,{base:'fractalEngine',xV:8,yV:64,w:64,rows:1,x:0,y:0},12345678987654321,function(me){
+			var mult=999;
 			mult*=Game.GetTieredCpsMult(me);
 			mult*=Game.magicCpS(me.name);
 			return me.baseCps*mult;
@@ -11780,6 +11798,9 @@ Game.Launch=function()
 				cost:function(){return Game.Objects['Javascript console'].amount>=100;},
 				buy:function(){Game.Objects['Javascript console'].sacrifice(100);},
 				costStr:function(){return '100 javascript consoles';}},
+            				cost:function(){return Game.Objects['Bald Power'].amount>=500;},
+				buy:function(){Game.Objects['Bald Power'].sacrifice(100);},
+				costStr:function(){return '500 Bald  Power';}}
 			{name:'Krumblor, cookie dragon',action:'Bake dragon cookie<br><small>Delicious!</small>',pic:6,
 				cost:function(){var fail=0;for (var i in Game.Objects){if (Game.Objects[i].amount<50) fail=1;}return (fail==0);},
 				buy:function(){for (var i in Game.Objects){Game.Objects[i].sacrifice(50);}Game.Unlock('Dragon cookie');},
