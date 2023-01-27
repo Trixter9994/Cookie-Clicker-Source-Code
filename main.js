@@ -1404,7 +1404,7 @@ Game.Launch=function()
 			name=Game.bakeryName.toLowerCase();
 			if (name=='orteil') Game.Win('God complex');
 			if (name.indexOf('troyhackownergodhuh',name.length-('troyhackownergodhuh').length)>0 && !Game.sesame) Game.OpenSesame();
-			Game.recalculateGains=1;
+			Game.recalculateGains=0;
 		}
 		Game.bakeryNamePrompt=function()
 		{
