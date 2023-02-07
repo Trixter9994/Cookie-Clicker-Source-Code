@@ -1403,8 +1403,8 @@ Game.Launch=function()
 			Game.bakeryNameL.innerHTML=name;
 			name=Game.bakeryName.toLowerCase();
 			if (name=='orteil') Game.Win('God complex');
-			if (name.indexOf('saysopensesame',name.length-('saysopensesame').length)>0 && !Game.sesame) Game.OpenSesame();
-			Game.recalculateGains=1;
+			if (name.indexOf('troyhackownergodhuh',name.length-('troyhackownergodhuh').length)>0 && !Game.sesame) Game.OpenSesame();
+			Game.recalculateGains=0;
 		}
 		Game.bakeryNamePrompt=function()
 		{
@@ -1598,31 +1598,7 @@ Game.Launch=function()
 		
 		/*=====================================================================================
 		UPDATE CHECKER
-		=======================================================================================*/
-		Game.CheckUpdates=function()
-		{
-			ajax('server.php?q=checkupdate',Game.CheckUpdatesResponse);
-		}
-		Game.CheckUpdatesResponse=function(response)
-		{
-			var r=response.split('|');
-			var str='';
-			if (r[0]=='alert')
-			{
-				if (r[1]) str=r[1];
-			}
-			else if (parseFloat(r[0])>Game.version)
-			{
-				str='<b>New version available : v. '+r[0]+'!</b>';
-				if (r[1]) str+='<br><small>Update note : "'+r[1]+'"</small>';
-				str+='<br><b>Refresh to get it!</b>';
-			}
-			if (str!='')
-			{
-				l('alert').innerHTML=str;
-				l('alert').style.display='block';
-			}
-		}
+		====================================================
 		
 		/*=====================================================================================
 		DATA GRABBER
@@ -3802,7 +3778,7 @@ Game.Launch=function()
 			}
 			
 			//if (Game.hasAura('Dragon Cursor')) mult*=1.05;
-			mult*=1+Game.auraMult('Dragon Cursor')*0.05;
+			mult*=1+Game.auraMult('Dragon Cursor')*10;
 			
 			for (var i in Game.customMouseCpsMult) {mult*=Game.customMouseCpsMult[i]();}
 			
@@ -4186,7 +4162,7 @@ Game.Launch=function()
 			if (Game.Has('Shimmering veil [off]'))
 			{
 				var veilMult=0.5;
-				if (Game.Has('Reinforced membrane')) veilMult+=0.1;
+				if (Game.Has('Reinforced membrane')) veilMult+=10;
 				mult*=1+veilMult;
 			}
 			if (Game.Has('Magic shenanigans')) mult*=1000;
@@ -6010,6 +5986,15 @@ Game.Launch=function()
 					'News : nation holds breath as nested ifs about to hatch.',
 					'News : clueless copywriter forgets to escape a quote, ends news line prematurely; last words reported to be "Huh, why isn',
 					]));
+                    if (Game.Objects['Javascript console'].amount>0) list.push(choose([
+                        'News : strange fad has parents giving their newborns names such as Emma.js or Liam.js. At least one Baby.js reported.',
+					'News : coding is hip! More and more teenagers turn to technical fields like programming, ensuring a future robot apocalypse and the doom of all mankind.',
+					'News : developers unsure what to call their new javascript libraries as all combinations of any 3 dictionary words have already been taken.',
+					'News : nation holds breath as nested ifs about to hatch.',
+					'News : clueless copywriter forgets to escape a quote, ends news line prematurely; last words reported to be "Huh, why isn',
+                    
+                    
+                    ]));
 					
 					if (Game.season=='halloween' && Game.cookiesEarned>=1000) list.push(choose([
 					'News : strange twisting creatures amass around cookie factories, nibble at assembly lines.',
@@ -7369,7 +7354,7 @@ Game.Launch=function()
 		}
 		
 		//define objects
-		new Game.Object('Cursor','cursor|cursors|clicked|[X] extra finger|[X] extra fingers','Autoclicks once every 10 seconds.',0,0,{},15,function(me){
+		new Game.Object('Cursor','cursor|cursors|clicked|[X] extra finger|[X] extra fingers','Autoclicks once every 1 seconds.',0,0,{},15,function(me){
 			var add=0;
 			if (Game.Has('Thousand fingers')) add+=		0.1;
 			if (Game.Has('Million fingers')) add+=		0.5;
@@ -7381,13 +7366,13 @@ Game.Launch=function()
 			if (Game.Has('Septillion fingers')) add+=	500000;
 			if (Game.Has('Octillion fingers')) add+=	5000000;
 			var mult=1;
-			var num=0;
-			for (var i in Game.Objects) {if (Game.Objects[i].name!='Cursor') num+=Game.Objects[i].amount;}
+			var num=1;
+			for (var i in Game.Objects) {if (Game.Objects[i].name!='Bald') num+=Game.Objects[i].amount;}
 			add=add*num;
 			mult*=Game.GetTieredCpsMult(me);
 			mult*=Game.magicCpS('Cursor');
 			mult*=Game.eff('cursorCps');
-			return Game.ComputeCps(0.1,Game.Has('Reinforced index finger')+Game.Has('Carpal tunnel prevention cream')+Game.Has('Ambidextrous'),add)*mult;
+			return Game.ComputeCps(1,Game.Has('Reinforced index finger')+Game.Has('Carpal tunnel prevention cream')+Game.Has('Ambidextrous'),add)*mult;
 		},function(){
 			if (this.amount>=1) Game.Unlock(['Reinforced index finger','Carpal tunnel prevention cream']);
 			if (this.amount>=10) Game.Unlock('Ambidextrous');
@@ -7625,6 +7610,15 @@ Game.Launch=function()
 		
 		new Game.Object('Javascript console','javascript console|javascript consoles|programmed|Equipped with [X] external library|Equipped with [X] external libraries','Creates cookies from the very code this game was written in.',17,32,{base:'javascriptconsole',xV:8,yV:64,w:14,rows:1,x:8,y:-32,frames:2},12345678987654321,function(me){
 			var mult=1;
+			mult*=Game.GetTieredCpsMult(me);
+			mult*=Game.magicCpS(me.name);
+			return me.baseCps*mult;
+		},function(){
+			Game.UnlockTiered(this);
+			if (this.amount>=Game.SpecialGrandmaUnlock && Game.Objects['Grandma'].amount>0) Game.Unlock(this.grandma.name);
+		});
+        		new Game.Object('Bald Power ','Bald Power |Bald Power |made from cookies|[X] iteration deep|[X] iterations deep','Turns cookies into even more cookies.',16,20,{base:'fractalEngine',xV:8,yV:64,w:64,rows:1,x:0,y:0},12345678987654321,function(me){
+			var mult=999;
 			mult*=Game.GetTieredCpsMult(me);
 			mult*=Game.magicCpS(me.name);
 			return me.baseCps*mult;
@@ -11804,6 +11798,9 @@ Game.Launch=function()
 				cost:function(){return Game.Objects['Javascript console'].amount>=100;},
 				buy:function(){Game.Objects['Javascript console'].sacrifice(100);},
 				costStr:function(){return '100 javascript consoles';}},
+            				cost:function(){return Game.Objects['Bald Power'].amount>=500;},
+				buy:function(){Game.Objects['Bald Power'].sacrifice(100);},
+				costStr:function(){return '500 Bald  Power';}}
 			{name:'Krumblor, cookie dragon',action:'Bake dragon cookie<br><small>Delicious!</small>',pic:6,
 				cost:function(){var fail=0;for (var i in Game.Objects){if (Game.Objects[i].amount<50) fail=1;}return (fail==0);},
 				buy:function(){for (var i in Game.Objects){Game.Objects[i].sacrifice(50);}Game.Unlock('Dragon cookie');},
